@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -29,7 +30,6 @@ public class PlayerController : MonoBehaviour
     public TMP_Text finalText;
     public TMP_Text restartText;
 
-
     void Start()
     {
         rb = GetComponent<Rigidbody>(); //Gets a reference to Rigidbody component.
@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour
     {
         ReduceTime(); //reduces the timer by the time elapsed in the game.
         JumpCheck(); //checks to see if the jump button is being pressed.
-        MovementCheck(); //checks for input on the "Horizontal" controller axis.
+        InputCheck(); //checks for input on the "Horizontal" controller axis.
         FallCheck(); //checks to see if you fell, lol.
         GameOver(); //checks to see if the time stopped, ending the game.
     }
@@ -85,21 +85,23 @@ public class PlayerController : MonoBehaviour
             verticalMovement = new Vector3(0, jumpMovement * jumpForce, 0);
         }
     }
-    void MovementCheck()
+    void InputCheck()
     {
-        if (!stopTime)
+        if (!stopTime) {
             horizontalMovement = new Vector3(Input.GetAxis("Horizontal") * moveSpeed, 0, 0);
+        }
     }
     void FallCheck()
     {
         if (transform.position.y < -10)
             stopTime = true;
     }
-    void OnTriggerEnter(Collider other)
-    {
-        goalReached = true;
-        stopTime = true;
-    }
+    void OnTriggerEnter(Collider collision) {
+        if (collision.gameObject.name == "Goal") {
+            goalReached = true;
+            stopTime = true;
+        }
+    } 
     void GameOver()
     {
         if(stopTime)
